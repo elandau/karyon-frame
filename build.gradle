@@ -1,0 +1,74 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2'
+}
+
+repositories {
+    jcenter()
+}
+
+configurations.all {
+	resolutionStrategy.cacheDynamicVersionsFor 1, 'hours'
+	resolutionStrategy.cacheChangingModulesFor 1, 'hours'
+}
+
+eclipse {
+  classpath {
+    downloadSources = true
+  }
+}
+
+idea {
+  module {
+    jdkName = '1.8'
+    downloadSources = true
+  }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+        resources {
+            srcDir 'src/test/resources'
+        }
+    }
+}
+
+dependencies {
+  compile group: 'com.netflix.karyon',   name: 'karyon2-core',          version: "${karyon_version}"
+  compile group: 'com.netflix.karyon',   name: 'karyon2-governator',    version: "${karyon_version}"
+  compile group: 'com.netflix.karyon',   name: 'karyon2-archaius',      version: "${karyon_version}"
+  compile group: 'com.netflix.karyon',   name: 'karyon2-servo',         version: "${karyon_version}"
+
+  //admin
+  compile group: 'org.eclipse.jetty', name: 'jetty-server',  version: '9.3.+'
+  compile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '9.3.+'
+
+  compile group: 'org.slf4j',        name: 'slf4j-api',       version: '1.7.+'
+  compile group: 'ch.qos.logback',   name: 'logback-classic', version: '1.1.3'
+
+  compile (group: 'com.netflix.karyon',  name: 'karyon2-admin-healthcheck-plugin',   version: "${karyon_version}") {
+    exclude group: 'javax.servlet'
+  }
+
+  compile (group: 'com.netflix.karyon',  name: 'karyon2-eureka',        version: "${karyon_version}")  {
+    exclude group: 'javax.servlet'
+  }
+
+}
